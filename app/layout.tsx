@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { FilmGrain } from "@/components/film-grain";
 import "./globals.css";
 
 const display = Outfit({
@@ -22,14 +23,15 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Prompt Studio — Video IA para Restaurante",
-  description: "Genera prompts de video cinematográfico para tus platos, paso a paso.",
+  title: "Prompt Studio — AI Video for Restaurants",
+  description: "Build cinematic AI video prompts for your dishes, step by step.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body>
+        <FilmGrain />
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

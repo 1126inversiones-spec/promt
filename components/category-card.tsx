@@ -3,21 +3,24 @@
 import { useRef, type MouseEvent } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
-import type { Category } from "@/lib/categories";
+import type { LucideIcon } from "lucide-react";
 
 const EASE: [number, number, number, number] = [0.21, 0.47, 0.32, 0.98];
 
 export function CategoryCard({
-  category,
+  icon: Icon,
+  title,
+  desc,
   active,
   onSelect,
 }: {
-  category: Category;
+  icon: LucideIcon;
+  title: string;
+  desc: string;
   active: boolean;
   onSelect: () => void;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
-  const Icon = category.icon;
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -67,8 +70,8 @@ export function CategoryCard({
         <Icon size={18} strokeWidth={1.6} />
       </div>
       <div className="relative z-10">
-        <div className="font-display text-sm font-semibold text-cream">{category.title}</div>
-        <div className="mt-1 text-xs leading-relaxed text-smoke">{category.desc}</div>
+        <div className="font-display text-sm font-semibold text-cream">{title}</div>
+        <div className="mt-1 text-xs leading-relaxed text-smoke">{desc}</div>
       </div>
       {active && (
         <motion.div

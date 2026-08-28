@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { PlusCircle, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { FORMATS, DURATIONS, type Category, type PromptConfig } from "@/lib/categories";
+import { FORMATS, DURATIONS, CAMERA_STYLES, type Category, type PromptConfig } from "@/lib/categories";
 
 const EASE: [number, number, number, number] = [0.21, 0.47, 0.32, 0.98];
 
@@ -118,7 +118,24 @@ export function ConfigForm({
             />
           </Field>
 
-          <Field label="Extra detail (optional)">
+          <Field label="Camera movement">
+            <select
+              className={cn(fieldBase, "appearance-none")}
+              value={config.camera}
+              onChange={(e) => onChange({ camera: e.target.value as PromptConfig["camera"] })}
+            >
+              {CAMERA_STYLES.map((c) => (
+                <option key={c.id} value={c.id} className="bg-base">
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+
+          <Field
+            label="Extra detail (optional)"
+            hint="Long text here gets trimmed automatically in the final prompt to keep it efficient."
+          >
             <textarea
               className={cn(fieldBase, "min-h-[70px] resize-y")}
               value={config.extra}

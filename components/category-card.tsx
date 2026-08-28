@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, type MouseEvent } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useRef, useState, type MouseEvent } from "react";
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 
@@ -13,14 +13,17 @@ export function CategoryCard({
   desc,
   active,
   onSelect,
+  previewSrc,
 }: {
   icon: LucideIcon;
   title: string;
   desc: string;
   active: boolean;
   onSelect: () => void;
+  previewSrc?: string;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
+  const [hovering, setHovering] = useState(false);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -41,12 +44,14 @@ export function CategoryCard({
   function handleLeave() {
     x.set(0);
     y.set(0);
+    setHovering(false);
   }
 
   return (
     <motion.button
       ref={ref}
       onClick={onSelect}
+      onMouseEnter={() => setHovering(true)}
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
       style={{ rotateX, rotateY, transformPerspective: 600 }}
@@ -54,11 +59,35 @@ export function CategoryCard({
       whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.25, ease: EASE }}
       className={cn(
-        "depth-card group relative flex flex-col gap-3 rounded-2xl p-4 text-left transition-colors",
+        "depth-card group relative flex flex-col gap-3 overflow-hidden rounded-2xl p-4 text-left transition-colors",
         active ? "border-ember-500/60 shadow-glow" : "hover:border-white/15"
       )}
     >
       <div className="depth-sheen" aria-hidden="true" />
+
+      {previewSrc && (
+        <AnimatePresence>
+          {hovering && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="absolute inset-0 z-[1]"
+            >
+              <video
+                src={previewSrc}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
       <div
         className={cn(
           "relative z-10 flex h-10 w-10 items-center justify-center rounded-xl border transition-colors",

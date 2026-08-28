@@ -93,6 +93,7 @@ export function CategoryGrid({
                     desc={cat.desc}
                     active={activeId === cat.id}
                     onSelect={() => onSelect(cat.id)}
+                    previewSrc={cat.previewSrc}
                   />
                 </motion.div>
               ))}

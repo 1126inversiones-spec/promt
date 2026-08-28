@@ -6,6 +6,7 @@ import { CategoryGrid } from "@/components/category-grid";
 import { ConfigForm } from "@/components/config-form";
 import { PromptTicket } from "@/components/prompt-ticket";
 import { HistoryPanel, type HistoryEntry } from "@/components/history-panel";
+import { PromptValidator } from "@/components/prompt-validator";
 import {
   CATEGORIES,
   buildPrompt,
@@ -95,6 +96,7 @@ export function PromptGenerator() {
                 onReset={handleReset}
               />
             )}
+            <PromptValidator />
           </div>
 
           <div>

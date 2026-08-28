@@ -34,7 +34,7 @@ export function PromptTicket({ prompt, orderNumber }: { prompt: string | null; o
       <div className="ticket-edge rounded-sm bg-cream px-6 pb-6 pt-7 text-[#26201a] shadow-card">
         <div className="mb-3 flex items-center justify-between border-b border-dashed border-[#26201a]/30 pb-2.5">
           <span className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.1em]">
-            <Receipt size={13} /> Orden de video
+            <Receipt size={13} /> Video order
           </span>
           <span className="font-mono text-[11px] opacity-60">
             #{String(orderNumber).padStart(2, "0")}
@@ -62,8 +62,7 @@ export function PromptTicket({ prompt, orderNumber }: { prompt: string | null; o
                 exit={{ opacity: 0 }}
                 className="py-2 text-[13px] leading-relaxed opacity-55"
               >
-                Elige un efecto para empezar a armar el prompt. Se irá completando aquí a medida
-                que llenas los campos.
+                Pick an effect to start building your prompt. It'll fill in here as you go.
               </motion.div>
             )}
           </AnimatePresence>
@@ -72,24 +71,21 @@ export function PromptTicket({ prompt, orderNumber }: { prompt: string | null; o
         {prompt && (
           <div className="mt-4 flex items-center justify-between border-t border-dashed border-[#26201a]/30 pt-3">
             <span className="text-[10.5px] leading-snug opacity-60">
-              Prompt en inglés — listo para IA de video.
+              Ready to paste into your AI video tool.
             </span>
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={handleCopy}
-              className={`flex items-center gap-1.5 rounded-md px-3.5 py-2 font-sans text-xs font-semibold transition-colors ${
-                copied ? "bg-emerald-600 text-white" : "bg-[#26201a] text-cream hover:bg-[#332a22]"
+              className={`btn-tactile flex items-center gap-1.5 rounded-md px-3.5 py-2 font-sans text-xs font-semibold ${
+                copied ? "bg-emerald-600 text-white" : "btn-tactile-dark"
               }`}
             >
               {copied ? <Check size={13} /> : <Copy size={13} />}
-              {copied ? "¡Copiado!" : "Copiar prompt"}
+              {copied ? "Copied!" : "Copy prompt"}
             </motion.button>
           </div>
         )}
       </div>
-      <p className="mt-3.5 text-center text-[11px] leading-relaxed text-smoke">
-        El prompt se genera en inglés porque así responden mejor la mayoría de modelos de video IA.
-      </p>
     </div>
   );
 }

@@ -44,8 +44,8 @@ export const CATEGORIES: Category[] = [
   {
     id: "wok",
     icon: Flame,
-    title: "Wok Hei / Salteados",
-    desc: "Noodles, arroces fritos, pastas al wok",
+    title: "Wok toss & stir-fry",
+    desc: "Noodles, fried rice, stir-fried pasta",
     background: "dark moody kitchen background",
     sampleDish: "stir-fried noodles and crisp vegetables",
     kicker: "high-impact food commercial video",
@@ -55,8 +55,8 @@ export const CATEGORIES: Category[] = [
   {
     id: "steam",
     icon: Waves,
-    title: "Vapor Denso",
-    desc: "Ramen, sopas, guisos, platos calientes",
+    title: "Heavy steam",
+    desc: "Ramen, soups, stews, hot dishes",
     background: "dark atmospheric background",
     sampleDish: "noodles",
     kicker: "cinematic product shot",
@@ -66,12 +66,12 @@ export const CATEGORIES: Category[] = [
   {
     id: "dust-savory",
     icon: Sparkles,
-    title: "Lluvia de Especias / Queso",
-    desc: "Pizzas, pastas, hamburguesas, cortes",
+    title: "Spice & cheese dust",
+    desc: "Pizza, pasta, burgers, cuts of meat",
     background: "dark moody background",
     sampleDish: "gourmet dish",
     ingredient: {
-      label: "Qué está cayendo (queso, especias, sal...)",
+      label: "What's falling (cheese, spices, salt...)",
       placeholder: "grated parmesan cheese",
       defaultValue: "grated parmesan cheese",
     },
@@ -82,12 +82,12 @@ export const CATEGORIES: Category[] = [
   {
     id: "cheese-pull",
     icon: Droplets,
-    title: "Queso Fundido / Salsa",
-    desc: "Pizzas, hamburguesas, lasañas",
+    title: "Cheese pull & sauce drip",
+    desc: "Pizza, burgers, lasagna",
     background: "commercial food studio backdrop",
     sampleDish: "burger",
     ingredient: {
-      label: "Qué se derrite o gotea",
+      label: "What's melting or dripping",
       placeholder: "melted cheese",
       defaultValue: "melted cheese",
     },
@@ -98,8 +98,8 @@ export const CATEGORIES: Category[] = [
   {
     id: "bbq",
     icon: Wind,
-    title: "Brasa / Humo de Parrilla",
-    desc: "Carnes a la parrilla, costillas, brochetas",
+    title: "Char & grill smoke",
+    desc: "Grilled meats, ribs, skewers",
     background: "dark rustic steakhouse atmosphere",
     sampleDish: "char-grilled meat",
     kicker: "cinematic grill commercial",
@@ -109,8 +109,8 @@ export const CATEGORIES: Category[] = [
   {
     id: "choc",
     icon: Milk,
-    title: "Cascada de Chocolate",
-    desc: "Volcanes, tortas húmedas, helados, brownies",
+    title: "Chocolate cascade",
+    desc: "Lava cakes, moist cakes, ice cream, brownies",
     background: "dark moody dessert bar background with soft warm bokeh",
     sampleDish: "chocolate volcano cake",
     kicker: "luxury dessert commercial video",
@@ -120,8 +120,8 @@ export const CATEGORIES: Category[] = [
   {
     id: "caramel",
     icon: GlassWater,
-    title: "Caramelo / Dulce de Leche",
-    desc: "Cheesecakes, flanes, panqueques, waffles",
+    title: "Caramel drizzle",
+    desc: "Cheesecake, flan, pancakes, waffles",
     background: "clean minimalist bakery background with soft depth of field",
     sampleDish: "cheesecake",
     kicker: "mouthwatering pastry commercial",
@@ -131,12 +131,12 @@ export const CATEGORIES: Category[] = [
   {
     id: "dust-sweet",
     icon: Snowflake,
-    title: "Lluvia de Azúcar Glas",
-    desc: "Croissants, tartas, tiramisú, soufflés",
+    title: "Powdered sugar snow",
+    desc: "Croissants, tarts, tiramisu, souffles",
     background: "dark atmospheric studio backdrop",
     sampleDish: "fresh pastry",
     ingredient: {
-      label: "Qué está cayendo (azúcar, cacao...)",
+      label: "What's falling (sugar, cocoa...)",
       placeholder: "powdered confectioner's sugar",
       defaultValue: "powdered confectioner's sugar",
     },
@@ -147,12 +147,12 @@ export const CATEGORIES: Category[] = [
   {
     id: "berry",
     icon: Cherry,
-    title: "Frutos Rojos y Crema",
-    desc: "Pavlovas, cheesecakes de fresa, waffles",
+    title: "Berries & cream",
+    desc: "Pavlova, strawberry cheesecake, waffles",
     background: "bright high-end patisserie aesthetic",
     sampleDish: "velvety whipped cream swirl",
     ingredient: {
-      label: "Frutas / toppings flotando",
+      label: "Floating fruit / toppings",
       placeholder: "fresh raspberries, sliced strawberries, and mint leaves",
       defaultValue: "fresh raspberries, sliced strawberries, and mint leaves",
     },
@@ -163,9 +163,9 @@ export const CATEGORIES: Category[] = [
 ];
 
 export const FORMATS = [
-  { value: "Vertical 9:16", label: "9:16 Vertical (Reels / TikTok / Stories)" },
-  { value: "Square 1:1", label: "1:1 Cuadrado (Feed)" },
-  { value: "Horizontal 16:9", label: "16:9 Horizontal (YouTube / Web)" },
+  { value: "Vertical 9:16", label: "9:16 vertical (Reels / TikTok / Stories)" },
+  { value: "Square 1:1", label: "1:1 square (Feed)" },
+  { value: "Horizontal 16:9", label: "16:9 horizontal (YouTube / Web)" },
 ] as const;
 
 export const DURATIONS = ["3", "5", "8"] as const;

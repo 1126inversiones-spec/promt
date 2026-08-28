@@ -58,10 +58,10 @@ export function ConfigForm({
             <span className="flex h-5 w-5 items-center justify-center rounded-full border border-ember-700 text-ember-400">
               2
             </span>
-            Configura el plato
+            Configure your dish
           </div>
 
-          <Field label="Nombre / descripción del plato">
+          <Field label="Dish name / description">
             <input
               className={fieldBase}
               value={config.dish}
@@ -82,7 +82,7 @@ export function ConfigForm({
           )}
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Formato">
+            <Field label="Format">
               <select
                 className={cn(fieldBase, "appearance-none")}
                 value={config.format}
@@ -95,7 +95,7 @@ export function ConfigForm({
                 ))}
               </select>
             </Field>
-            <Field label="Duración">
+            <Field label="Duration">
               <select
                 className={cn(fieldBase, "appearance-none")}
                 value={config.duration}
@@ -103,14 +103,14 @@ export function ConfigForm({
               >
                 {DURATIONS.map((d) => (
                   <option key={d} value={d} className="bg-base">
-                    {d} segundos
+                    {d} seconds
                   </option>
                 ))}
               </select>
             </Field>
           </div>
 
-          <Field label="Fondo / ambiente" hint="Sugerido según el efecto — puedes cambiarlo.">
+          <Field label="Background / mood" hint="Suggested based on the effect — feel free to change it.">
             <input
               className={fieldBase}
               value={config.background}
@@ -118,11 +118,11 @@ export function ConfigForm({
             />
           </Field>
 
-          <Field label="Detalle extra (opcional)">
+          <Field label="Extra detail (optional)">
             <textarea
               className={cn(fieldBase, "min-h-[70px] resize-y")}
               value={config.extra}
-              placeholder="ej. mantel de madera oscura, cámara girando lentamente..."
+              placeholder="e.g. dark wood table, camera slowly rotating..."
               onChange={(e) => onChange({ extra: e.target.value })}
             />
           </Field>
@@ -132,19 +132,19 @@ export function ConfigForm({
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               onClick={onAdd}
-              className="flex items-center gap-2 rounded-lg bg-ember-500 px-4 py-2.5 text-sm font-semibold text-base shadow-glow transition-colors hover:bg-ember-400"
+              className="btn-tactile btn-tactile-primary flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold"
             >
               <PlusCircle size={16} strokeWidth={2} />
-              Agregar a mi lista
+              Add to my list
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               onClick={onReset}
-              className="flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2.5 text-sm text-smoke transition-colors hover:border-white/25 hover:text-cream"
+              className="btn-tactile btn-tactile-dark flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm"
             >
               <RotateCcw size={14} strokeWidth={2} />
-              Elegir otro efecto
+              Choose another effect
             </motion.button>
           </div>
         </motion.div>

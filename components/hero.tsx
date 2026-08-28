@@ -44,21 +44,21 @@ export function Hero() {
           className="mb-5 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-ember-400"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-ember-500" />
-          Herramienta interna · eMenu / Video IA
+          Internal tool · eMenu / AI video
         </motion.div>
 
         <motion.h1
           variants={item}
           className="max-w-3xl font-display text-[clamp(2.2rem,5vw,3.75rem)] font-semibold leading-[1.05] tracking-tight"
         >
-          Arma el <span className="text-ember-500">prompt</span> perfecto
+          Build the perfect <span className="text-ember-500">prompt</span>
           <br />
-          para tus videos de plato.
+          for your dish videos.
         </motion.h1>
 
         <motion.p variants={item} className="mt-6 max-w-xl text-balance text-base leading-relaxed text-smoke md:text-lg">
-          Elige el efecto según el tipo de plato, completa los detalles y copia el prompt listo
-          para pegar en tu generador de video IA — Runway, Kling, Pika, Luma.
+          Pick the effect for your dish, fill in the details, and copy a prompt that's ready
+          to paste into your AI video generator — Runway, Kling, Pika, Luma.
         </motion.p>
       </motion.div>
     </section>

@@ -16,10 +16,10 @@ export interface HistoryEntry {
 export function HistoryPanel({ entries }: { entries: HistoryEntry[] }) {
   return (
     <div className="mt-8">
-      <h3 className="mb-3 font-display text-lg font-semibold text-cream">Mi lista de prompts</h3>
+      <h3 className="mb-3 font-display text-lg font-semibold text-cream">My prompt list</h3>
 
       {entries.length === 0 ? (
-        <p className="text-sm text-smoke">Aún no has guardado ningún prompt.</p>
+        <p className="text-sm text-smoke">You haven't saved any prompts yet.</p>
       ) : (
         <div className="flex flex-col gap-2.5">
           <AnimatePresence initial={false}>
@@ -53,7 +53,7 @@ function HistoryRow({ entry }: { entry: HistoryEntry }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, x: -12 }}
       transition={{ duration: 0.35, ease: EASE }}
-      className="glass flex items-center justify-between gap-3 rounded-xl px-4 py-3"
+      className="depth-card flex items-center justify-between gap-3 rounded-xl px-4 py-3"
     >
       <div className="min-w-0">
         <div className="truncate text-sm font-medium text-cream">{entry.dish}</div>
@@ -65,7 +65,7 @@ function HistoryRow({ entry }: { entry: HistoryEntry }) {
         className="flex shrink-0 items-center gap-1.5 rounded-md border border-white/10 px-3 py-1.5 text-xs text-ember-400 transition-colors hover:border-ember-500/50"
       >
         {copied ? <Check size={12} /> : <Copy size={12} />}
-        {copied ? "Copiado" : "Copiar"}
+        {copied ? "Copied" : "Copy"}
       </motion.button>
     </motion.div>
   );

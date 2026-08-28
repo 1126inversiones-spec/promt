@@ -29,7 +29,7 @@ export function CategoryGrid({
         <span className="flex h-5 w-5 items-center justify-center rounded-full border border-ember-700 text-ember-400">
           1
         </span>
-        Elige el efecto según el plato
+        Pick the effect for your dish
       </div>
 
       <motion.div

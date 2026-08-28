@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Copy, Receipt } from "lucide-react";
+import { Check, Copy, Receipt, Sparkles } from "lucide-react";
 
 const EASE: [number, number, number, number] = [0.21, 0.47, 0.32, 0.98];
+const GOOGLE_FX_URL = "https://labs.google/fx/es-419/tools/flow/project/847c16e6-4fac-4e85-a6ca-2f69c44d47b8";
 
 async function copyText(text: string) {
   try {
@@ -27,6 +28,16 @@ export function PromptTicket({ prompt, orderNumber }: { prompt: string | null; o
     await copyText(prompt);
     setCopied(true);
     setTimeout(() => setCopied(false), 1600);
+  }
+
+  async function handleGenerateVideo() {
+    if (!prompt) return;
+    // Copy prompt to clipboard
+    await copyText(prompt);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
+    // Open Google Fx in new tab
+    window.open(GOOGLE_FX_URL, "_blank");
   }
 
   return (
@@ -69,20 +80,36 @@ export function PromptTicket({ prompt, orderNumber }: { prompt: string | null; o
         </div>
 
         {prompt && (
-          <div className="mt-4 flex items-center justify-between border-t border-dashed border-[#26201a]/30 pt-3">
-            <span className="text-[10.5px] leading-snug opacity-60">
-              Ready to paste into your AI video tool.
-            </span>
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={handleCopy}
-              className={`btn-tactile flex items-center gap-1.5 rounded-md px-3.5 py-2 font-sans text-xs font-semibold ${
-                copied ? "bg-emerald-600 text-white" : "btn-tactile-dark"
-              }`}
-            >
-              {copied ? <Check size={13} /> : <Copy size={13} />}
-              {copied ? "Copied!" : "Copy prompt"}
-            </motion.button>
+          <div className="mt-4 space-y-3 border-t border-dashed border-[#26201a]/30 pt-3">
+            <div className="flex flex-col gap-2">
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={handleGenerateVideo}
+                className="btn-tactile btn-tactile-primary flex items-center justify-center gap-2 rounded-md px-3.5 py-2 font-sans text-xs font-semibold text-white"
+              >
+                <Sparkles size={14} />
+                Generate Video with Google Fx
+              </motion.button>
+              <p className="text-[10px] leading-snug opacity-60 text-center">
+                Opens Google Generative AI • Prompt already copied
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-[10.5px] leading-snug opacity-60">
+                Ready to paste.
+              </span>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={handleCopy}
+                className={`btn-tactile flex items-center gap-1.5 rounded-md px-3.5 py-2 font-sans text-xs font-semibold ${
+                  copied ? "bg-emerald-600 text-white" : "btn-tactile-dark"
+                }`}
+              >
+                {copied ? <Check size={13} /> : <Copy size={13} />}
+                {copied ? "Copied!" : "Copy prompt"}
+              </motion.button>
+            </div>
           </div>
         )}
       </div>

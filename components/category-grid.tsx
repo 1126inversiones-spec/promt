@@ -37,7 +37,7 @@ export function CategoryGrid({
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: "-80px" }}
-        className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+        className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
       >
         {CATEGORIES.map((cat) => (
           <motion.div key={cat.id} variants={item}>

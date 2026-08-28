@@ -1,5 +1,10 @@
 import { PromptGenerator } from "@/components/prompt-generator";
+import { DemoAccess } from "@/components/demo-access";
 
 export default function Page() {
-  return <PromptGenerator />;
+  return (
+    <DemoAccess>
+      <PromptGenerator />
+    </DemoAccess>
+  );
 }

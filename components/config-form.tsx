@@ -52,14 +52,28 @@ export function ConfigForm({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.35, ease: EASE }}
-          className="mt-8"
+          className="mt-0 sm:mt-8"
         >
-          <div className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-smoke">
+          <div className="mb-6 hidden sm:flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-smoke">
             <span className="flex h-5 w-5 items-center justify-center rounded-full border border-ember-700 text-ember-400">
               2
             </span>
             Configure your dish
           </div>
+
+          {/* Info Note */}
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.3 }}
+            className="mb-6 rounded-lg border border-ember-500/30 bg-ember-950/40 px-4 py-3 text-xs leading-relaxed text-ember-200"
+          >
+            <p className="font-semibold mb-1">💡 Prompt Studio</p>
+            <p>
+              This tool generates AI video prompts tailored to your dish. Copy the prompt and use it in{" "}
+              <span className="text-ember-300 font-medium">Google Generative AI Studio</span> to create videos.
+            </p>
+          </motion.div>
 
           <Field label="Dish name / description">
             <input
@@ -127,12 +141,12 @@ export function ConfigForm({
             />
           </Field>
 
-          <div className="mt-2 flex flex-wrap gap-2.5">
+          <div className="mt-6 flex flex-col gap-3 sm:flex-wrap sm:flex-row">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               onClick={onAdd}
-              className="btn-tactile btn-tactile-primary flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold"
+              className="btn-tactile btn-tactile-primary flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold sm:flex-none"
             >
               <PlusCircle size={16} strokeWidth={2} />
               Add to my list
@@ -141,10 +155,10 @@ export function ConfigForm({
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               onClick={onReset}
-              className="btn-tactile btn-tactile-dark flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm"
+              className="btn-tactile btn-tactile-dark flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm sm:flex-none"
             >
               <RotateCcw size={14} strokeWidth={2} />
-              Choose another effect
+              <span>Choose another effect</span>
             </motion.button>
           </div>
         </motion.div>

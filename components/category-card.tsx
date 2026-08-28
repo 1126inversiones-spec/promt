@@ -3,6 +3,7 @@
 import { useRef, useState, type MouseEvent } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Trash2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const EASE: [number, number, number, number] = [0.21, 0.47, 0.32, 0.98];
@@ -14,6 +15,8 @@ export function CategoryCard({
   active,
   onSelect,
   previewSrc,
+  badge,
+  onDelete,
 }: {
   icon: LucideIcon;
   title: string;
@@ -21,6 +24,8 @@ export function CategoryCard({
   active: boolean;
   onSelect: () => void;
   previewSrc?: string;
+  badge?: string;
+  onDelete?: () => void;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
   const [hovering, setHovering] = useState(false);
@@ -99,13 +104,32 @@ export function CategoryCard({
         <Icon size={18} strokeWidth={1.6} />
       </div>
       <div className="relative z-10">
-        <div className="font-display text-sm font-semibold text-cream">{title}</div>
+        <div className="flex items-center gap-1.5">
+          <div className="font-display text-sm font-semibold text-cream">{title}</div>
+          {badge && (
+            <span className="rounded-full bg-ember-500/15 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wide text-ember-400">
+              {badge}
+            </span>
+          )}
+        </div>
         <div className="mt-1 text-xs leading-relaxed text-smoke">{desc}</div>
       </div>
+      {onDelete && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          aria-label="Delete custom prompt"
+          className="absolute right-2.5 top-2.5 z-10 flex h-6 w-6 items-center justify-center rounded-md text-smoke opacity-0 transition-opacity hover:text-red-400 group-hover:opacity-100"
+        >
+          <Trash2 size={13} />
+        </button>
+      )}
       {active && (
         <motion.div
           layoutId="active-pill"
-          className="absolute right-3 top-3 z-10 h-2 w-2 rounded-full bg-ember-500"
+          className="absolute left-3 top-3 z-10 h-2 w-2 rounded-full bg-ember-500"
           transition={{ duration: 0.3, ease: EASE }}
         />
       )}

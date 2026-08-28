@@ -1,8 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, WandSparkles } from "lucide-react";
 import { GROUPS, categoriesForGroup, type GroupId, type CategoryId } from "@/lib/categories";
+import type { CustomEffect } from "@/lib/custom-effects";
 import { CategoryCard } from "@/components/category-card";
 
 const EASE: [number, number, number, number] = [0.21, 0.47, 0.32, 0.98];
@@ -20,18 +21,31 @@ const item = {
 export function CategoryGrid({
   activeGroupId,
   activeId,
+  activeCustomId,
+  customEffects,
+  canManage,
   onSelectGroup,
   onSelect,
+  onSelectCustom,
+  onDeleteCustom,
   onBack,
 }: {
   activeGroupId: GroupId | null;
   activeId: CategoryId | null;
+  activeCustomId: string | null;
+  customEffects: CustomEffect[];
+  canManage: boolean;
   onSelectGroup: (id: GroupId) => void;
   onSelect: (id: CategoryId) => void;
+  onSelectCustom: (entry: CustomEffect) => void;
+  onDeleteCustom: (id: string) => void;
   onBack: () => void;
 }) {
   const activeGroup = GROUPS.find((g) => g.id === activeGroupId) ?? null;
   const effects = activeGroup ? categoriesForGroup(activeGroup.id) : [];
+  const groupCustomEffects = activeGroup
+    ? customEffects.filter((e) => e.groupId === activeGroup.id)
+    : [];
 
   return (
     <div>
@@ -94,6 +108,19 @@ export function CategoryGrid({
                     active={activeId === cat.id}
                     onSelect={() => onSelect(cat.id)}
                     previewSrc={cat.previewSrc}
+                  />
+                </motion.div>
+              ))}
+              {groupCustomEffects.map((entry) => (
+                <motion.div key={entry.id} variants={item}>
+                  <CategoryCard
+                    icon={WandSparkles}
+                    title={entry.title}
+                    desc="Designer-submitted prompt"
+                    active={activeCustomId === entry.id}
+                    onSelect={() => onSelectCustom(entry)}
+                    badge="Custom"
+                    onDelete={canManage ? () => onDeleteCustom(entry.id) : undefined}
                   />
                 </motion.div>
               ))}

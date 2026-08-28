@@ -1,0 +1,72 @@
+"use client";
+
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, Copy } from "lucide-react";
+
+const EASE: [number, number, number, number] = [0.21, 0.47, 0.32, 0.98];
+
+export interface HistoryEntry {
+  id: string;
+  dish: string;
+  categoryTitle: string;
+  prompt: string;
+}
+
+export function HistoryPanel({ entries }: { entries: HistoryEntry[] }) {
+  return (
+    <div className="mt-8">
+      <h3 className="mb-3 font-display text-lg font-semibold text-cream">Mi lista de prompts</h3>
+
+      {entries.length === 0 ? (
+        <p className="text-sm text-smoke">Aún no has guardado ningún prompt.</p>
+      ) : (
+        <div className="flex flex-col gap-2.5">
+          <AnimatePresence initial={false}>
+            {entries.map((entry) => (
+              <HistoryRow key={entry.id} entry={entry} />
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function HistoryRow({ entry }: { entry: HistoryEntry }) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(entry.prompt);
+    } catch {
+      /* clipboard unavailable */
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1300);
+  }
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: -10, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, x: -12 }}
+      transition={{ duration: 0.35, ease: EASE }}
+      className="glass flex items-center justify-between gap-3 rounded-xl px-4 py-3"
+    >
+      <div className="min-w-0">
+        <div className="truncate text-sm font-medium text-cream">{entry.dish}</div>
+        <div className="mt-0.5 text-xs text-smoke">{entry.categoryTitle}</div>
+      </div>
+      <motion.button
+        whileTap={{ scale: 0.94 }}
+        onClick={handleCopy}
+        className="flex shrink-0 items-center gap-1.5 rounded-md border border-white/10 px-3 py-1.5 text-xs text-ember-400 transition-colors hover:border-ember-500/50"
+      >
+        {copied ? <Check size={12} /> : <Copy size={12} />}
+        {copied ? "Copiado" : "Copiar"}
+      </motion.button>
+    </motion.div>
+  );
+}

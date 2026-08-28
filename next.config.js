@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
 const repoName = "promt";
+const isDev = process.env.NODE_ENV === "development";
 
 const nextConfig = {
   reactStrictMode: true,
   output: "export",
   images: { unoptimized: true },
-  basePath: `/${repoName}`,
-  assetPrefix: `/${repoName}/`,
+  basePath: isDev ? "" : `/${repoName}`,
+  assetPrefix: isDev ? "" : `/${repoName}/`,
 };
 
 module.exports = nextConfig;

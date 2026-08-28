@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { FilmGrain } from "@/components/film-grain";
+import { Footer } from "@/components/footer";
 import "./globals.css";
 
 const display = Outfit({
@@ -32,7 +33,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body>
         <FilmGrain />
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmoothScroll>
+          <div className="flex flex-col min-h-screen">
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+        </SmoothScroll>
       </body>
     </html>
   );

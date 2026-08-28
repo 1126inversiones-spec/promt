@@ -481,8 +481,15 @@ export function buildPrompt(category: Category, config: PromptConfig): string {
   const ing = config.ingredient.trim();
   const extraRaw = config.extra.trim();
   const extra = extraRaw ? `\n\nAdditional details: ${extraRaw}.` : "";
-  const header = `${config.format} ${category.kicker}, ${config.duration}-second seamless loop.\n\n`;
-  return header + category.body(dish, bg, extra, ing);
+
+  const header =
+    `${config.format} ${category.kicker}, ${config.duration}-second seamless loop.\n\n` +
+    `Use the uploaded photo as the exact reference for this dish \u2014 keep the food, plating, colors, portion size, and framing identical to the source image. Do not restyle, replace, or regenerate the dish itself.\n\n`;
+
+  const lock =
+    `\n\nOnly animate the effect described above around the dish. The plate, food, and composition must stay exactly as in the reference photo \u2014 no new ingredients, no garnish changes, no altered plating, no different angle on the dish itself.`;
+
+  return header + category.body(dish, bg, extra, ing) + lock;
 }
 
 export function defaultConfig(category: Category): PromptConfig {

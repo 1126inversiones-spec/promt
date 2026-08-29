@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Download } from "lucide-react";
 
 const EASE: [number, number, number, number] = [0.21, 0.47, 0.32, 0.98];
 
@@ -13,10 +13,42 @@ export interface HistoryEntry {
   prompt: string;
 }
 
+function exportEntries(entries: HistoryEntry[]) {
+  const date = new Date().toISOString().slice(0, 10);
+  const body = entries
+    .map(
+      (e, i) =>
+        `${i + 1}. ${e.dish} \u2014 ${e.categoryTitle}\n${"-".repeat(40)}\n${e.prompt}\n`
+    )
+    .join("\n");
+  const content = `Prompt Studio \u2014 exported ${date}\n${"=".repeat(40)}\n\n${body}`;
+
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `prompt-studio-export-${date}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 export function HistoryPanel({ entries }: { entries: HistoryEntry[] }) {
   return (
     <div className="mt-8">
-      <h3 className="mb-3 font-display text-lg font-semibold text-cream">My prompt list</h3>
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="font-display text-lg font-semibold text-cream">My prompt list</h3>
+        {entries.length > 0 && (
+          <button
+            onClick={() => exportEntries(entries)}
+            className="flex items-center gap-1.5 text-xs text-ember-400 transition-colors hover:text-ember-300"
+          >
+            <Download size={12} />
+            Export
+          </button>
+        )}
+      </div>
 
       {entries.length === 0 ? (
         <p className="text-sm text-smoke">You haven't saved any prompts yet.</p>

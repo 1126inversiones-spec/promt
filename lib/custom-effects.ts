@@ -20,6 +20,7 @@ export interface CustomEffect {
   title: string;
   prompt: string;
   createdAt: number;
+  createdBy: string | null;
 }
 
 const COLLECTION = "customEffects";
@@ -29,6 +30,7 @@ interface CustomEffectDoc {
   title: string;
   prompt: string;
   createdAt: Timestamp | null;
+  createdBy?: string | null;
 }
 
 /** Subscribes to the shared library in real time. Returns an unsubscribe function. */
@@ -45,6 +47,7 @@ export function subscribeToCustomEffects(callback: (effects: CustomEffect[]) => 
           title: data.title,
           prompt: data.prompt,
           createdAt: data.createdAt?.toMillis() ?? Date.now(),
+          createdBy: data.createdBy ?? null,
         };
       });
       callback(effects);
@@ -56,15 +59,40 @@ export function subscribeToCustomEffects(callback: (effects: CustomEffect[]) => 
   );
 }
 
-export async function addCustomEffect(groupId: GroupId, title: string, prompt: string): Promise<void> {
+export async function addCustomEffect(
+  groupId: GroupId,
+  title: string,
+  prompt: string,
+  createdBy: string | null
+): Promise<void> {
   await addDoc(collection(db, COLLECTION), {
     groupId,
     title: title.trim() || "Untitled prompt",
     prompt,
     createdAt: serverTimestamp(),
+    createdBy,
   });
 }
 
 export async function removeCustomEffect(id: string): Promise<void> {
   await deleteDoc(doc(db, COLLECTION, id));
+}
+
+/** Default suggested title for a new prompt in a group, e.g. "Drinks prompt". */
+export function suggestedTitleFor(groupTitle: string): string {
+  return `${groupTitle} prompt`;
+}
+
+/**
+ * Returns a title guaranteed not to collide with existingTitles. If the base title is
+ * already taken, appends " V2", " V3", etc., picking the next free number.
+ */
+export function suggestUniqueTitle(baseTitle: string, existingTitles: string[]): string {
+  const trimmed = baseTitle.trim() || "Untitled prompt";
+  if (!existingTitles.includes(trimmed)) return trimmed;
+  let n = 2;
+  while (existingTitles.includes(`${trimmed} V${n}`)) {
+    n += 1;
+  }
+  return `${trimmed} V${n}`;
 }

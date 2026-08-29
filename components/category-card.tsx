@@ -3,6 +3,7 @@
 import { useRef, useState, type MouseEvent } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useDeleteConfirm } from "@/lib/use-delete-confirm";
 import { Trash2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -12,6 +13,7 @@ export function CategoryCard({
   icon: Icon,
   title,
   desc,
+  meta,
   active,
   onSelect,
   previewSrc,
@@ -21,6 +23,7 @@ export function CategoryCard({
   icon: LucideIcon;
   title: string;
   desc: string;
+  meta?: string;
   active: boolean;
   onSelect: () => void;
   previewSrc?: string;
@@ -29,6 +32,7 @@ export function CategoryCard({
 }) {
   const ref = useRef<HTMLButtonElement>(null);
   const [hovering, setHovering] = useState(false);
+  const { confirming, handleClick: handleDeleteClick, reset: resetDeleteConfirm } = useDeleteConfirm(onDelete);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -50,6 +54,7 @@ export function CategoryCard({
     x.set(0);
     y.set(0);
     setHovering(false);
+    resetDeleteConfirm();
   }
 
   return (
@@ -113,17 +118,21 @@ export function CategoryCard({
           )}
         </div>
         <div className="mt-1 text-xs leading-relaxed text-smoke">{desc}</div>
+        {meta && <div className="mt-1.5 font-mono text-[10px] text-smoke/60">{meta}</div>}
       </div>
       {onDelete && (
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          aria-label="Delete custom prompt"
-          className="absolute right-2.5 top-2.5 z-10 flex h-6 w-6 items-center justify-center rounded-md text-smoke opacity-0 transition-opacity hover:text-red-400 group-hover:opacity-100"
+          onClick={handleDeleteClick}
+          aria-label={confirming ? "Confirm delete" : "Delete custom prompt"}
+          className={cn(
+            "absolute right-2.5 top-2.5 z-10 flex items-center gap-1 rounded-md px-1.5 py-1 text-[10px] font-semibold transition-all",
+            confirming
+              ? "bg-red-500 text-white opacity-100"
+              : "text-smoke opacity-0 hover:text-red-400 group-hover:opacity-100"
+          )}
         >
           <Trash2 size={13} />
+          {confirming && "Confirm?"}
         </button>
       )}
       {active && (

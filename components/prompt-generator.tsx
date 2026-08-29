@@ -22,6 +22,8 @@ import {
   type CustomEffect,
 } from "@/lib/custom-effects";
 import { subscribeToAuth, signInWithGoogle, signOutUser } from "@/lib/auth";
+import { Toast } from "@/components/toast";
+import { Footer } from "@/components/footer";
 import type { User } from "firebase/auth";
 import { motion } from "framer-motion";
 import { RotateCcw, PlusCircle } from "lucide-react";
@@ -33,10 +35,15 @@ export function PromptGenerator() {
   const [config, setConfig] = useState<PromptConfig | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [customEffects, setCustomEffects] = useState<CustomEffect[]>([]);
+  const [customEffectsLoading, setCustomEffectsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = subscribeToCustomEffects(setCustomEffects);
+    const unsubscribe = subscribeToCustomEffects((effects) => {
+      setCustomEffects(effects);
+      setCustomEffectsLoading(false);
+    });
     return unsubscribe;
   }, []);
 
@@ -94,7 +101,7 @@ export function PromptGenerator() {
     }
     removeCustomEffect(id).catch((err) => {
       console.error("Failed to delete custom effect:", err);
-      alert("You don't have permission to delete this prompt.");
+      setToastMessage("You don't have permission to delete this prompt.");
     });
   }
 
@@ -129,13 +136,20 @@ export function PromptGenerator() {
   }
 
   function handleSaveToLibrary(groupId: GroupId, title: string, prompt: string) {
-    return addCustomEffect(groupId, title, prompt);
+    return addCustomEffect(groupId, title, prompt, user?.email ?? null);
   }
 
   return (
     <main className="min-h-screen">
+      <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
       <Hero>
-        <PromptIntake user={user} onSignIn={signInWithGoogle} onSignOut={signOutUser} onSave={handleSaveToLibrary} />
+        <PromptIntake
+          user={user}
+          onSignIn={signInWithGoogle}
+          onSignOut={signOutUser}
+          onSave={handleSaveToLibrary}
+          customEffects={customEffects}
+        />
       </Hero>
 
       <section className="mx-auto max-w-6xl px-6 pb-24">
@@ -146,6 +160,7 @@ export function PromptGenerator() {
               activeId={activeId}
               activeCustomId={activeCustomId}
               customEffects={customEffects}
+              customEffectsLoading={customEffectsLoading}
               canManage={!!user}
               onSelectGroup={handleSelectGroup}
               onSelect={handleSelectEffect}
@@ -210,6 +225,8 @@ export function PromptGenerator() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }

@@ -1,3 +1,5 @@
+import { CATEGORIES, CAMERA_STYLES } from "./categories";
+
 export type CheckStatus = "pass" | "warn" | "fail";
 
 export interface PromptCheck {
@@ -14,9 +16,32 @@ const MOTION_WORDS =
 const LIGHT_BG_RE = /\b(lighting|light|backdrop|background|bokeh|studio)\b/i;
 const REFERENCE_LOCK_RE = /reference photo|exact reference|do not (restyle|alter|regenerate|replace)/i;
 const QUALITY_RE = /\b(4k|8k|photorealistic|cinematic|commercial|hd)\b/i;
-// Flags a generic word (food/dish/plate/meal) only when it stands alone as the subject —
-// not when it's part of a list (", food,") or a fixed phrase ("the dish itself").
-const VAGUE_SUBJECT_RE = /\b(food|dish|meal|plate)\b(?!\s+\w)(?!,)/i;
+const VAGUE_SUBJECT_RE = /\b(food|dish|meal|plate)\b(?!\s+(photography|commercial|studio|styling))/i;
+
+// The two fixed sentences Prompt Studio always appends (see buildPrompt in categories.ts).
+// They legitimately use "dish"/"food"/"plate" generically by design — strip them before
+// checking for vague subject words, so only what the designer actually wrote is judged.
+const FIXED_LOCK_PATTERNS = [
+  /use the uploaded photo as the exact reference for this dish[\s\S]*?do not restyle, replace, or regenerate the dish itself\./i,
+  /only animate the effect described above around the dish\.[\s\S]*?no different angle on the dish itself\./i,
+];
+
+function stripFixedLockText(text: string): string {
+  let out = FIXED_LOCK_PATTERNS.reduce((acc, pattern) => acc.replace(pattern, ""), text);
+  // Also strip Prompt Studio's own fixed phrases (camera directions, genre kickers,
+  // background descriptors) — they legitimately reuse "dish"/"food"/"plate" by design
+  // and shouldn't count as the designer being vague.
+  const knownPhrases = [
+    ...CAMERA_STYLES.map((c) => c.description),
+    ...CATEGORIES.map((c) => c.kicker),
+    ...CATEGORIES.map((c) => c.background),
+  ];
+  for (const phrase of knownPhrases) {
+    const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    out = out.replace(new RegExp(escaped, "gi"), "");
+  }
+  return out;
+}
 
 const TARGET_MIN_CHARS = 350;
 const TARGET_MAX_CHARS = 750;
@@ -122,12 +147,13 @@ export function validatePrompt(raw: string): { checks: PromptCheck[]; charCount:
     });
   }
 
-  if (VAGUE_SUBJECT_RE.test(text)) {
+  if (VAGUE_SUBJECT_RE.test(stripFixedLockText(text))) {
     checks.push({
       id: "specificity",
       label: "Dish specificity",
       status: "warn",
-      message: "Replace the generic word (\u201cfood\u201d, \u201cdish\u201d, \u201cplate\u201d) with the actual dish name \u2014 it noticeably improves the result.",
+      message:
+        "Name the actual dish instead of a generic word \u2014 e.g. swap \u201cthe dish\u201d for \u201cthe grilled salmon\u201d or \u201cthe chocolate lava cake.\u201d",
     });
   }
 

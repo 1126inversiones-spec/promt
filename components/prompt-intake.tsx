@@ -156,10 +156,17 @@ export function PromptIntake({
                     <motion.div
                       key={check.id}
                       variants={{ hidden: { opacity: 0, x: -6 }, show: { opacity: 1, x: 0 } }}
-                      className="flex items-center gap-2"
+                      className="flex items-start gap-2"
                     >
-                      <Icon size={13} className={cn("shrink-0", color)} />
-                      <span className="text-[11.5px] text-smoke">{check.label}</span>
+                      <Icon size={13} className={cn("mt-0.5 shrink-0", color)} />
+                      <div>
+                        <span className="text-[11.5px] text-smoke">{check.label}</span>
+                        {check.status !== "pass" && (
+                          <p className="mt-0.5 text-[10.5px] leading-relaxed text-smoke/70">
+                            {check.message}
+                          </p>
+                        )}
+                      </div>
                     </motion.div>
                   );
                 })}

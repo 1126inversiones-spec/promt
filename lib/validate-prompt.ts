@@ -14,10 +14,10 @@ const MOTION_WORDS =
 const LIGHT_BG_RE = /\b(lighting|light|backdrop|background|bokeh|studio)\b/i;
 const REFERENCE_LOCK_RE = /reference photo|exact reference|do not (restyle|alter|regenerate|replace)/i;
 const QUALITY_RE = /\b(4k|8k|photorealistic|cinematic|commercial|hd)\b/i;
-const VAGUE_SUBJECT_RE = /\b(food|dish|meal|plate)\b(?!\s+\w)/i;
+// Flags a generic word (food/dish/plate/meal) only when it stands alone as the subject —
+// not when it's part of a list (", food,") or a fixed phrase ("the dish itself").
+const VAGUE_SUBJECT_RE = /\b(food|dish|meal|plate)\b(?!\s+\w)(?!,)/i;
 
-const MIN_WORDS = 25;
-const MAX_WORDS = 180;
 const TARGET_MIN_CHARS = 350;
 const TARGET_MAX_CHARS = 750;
 
@@ -30,12 +30,12 @@ export function validatePrompt(raw: string): { checks: PromptCheck[]; charCount:
 
   checks.push(
     FORMAT_RE.test(text)
-      ? { id: "format", label: "Format specified", status: "pass", message: "Aspect ratio or orientation is stated." }
+      ? { id: "format", label: "Format specified", status: "pass", message: "Aspect ratio is stated." }
       : {
           id: "format",
           label: "Format specified",
           status: "fail",
-          message: "No aspect ratio found (e.g. \u201c9:16 vertical\u201d). Video tools default unpredictably without it.",
+          message: "Add an aspect ratio near the start, e.g. \u201c9:16 vertical\u201d or \u201c16:9 horizontal.\u201d",
         }
   );
 
@@ -46,18 +46,18 @@ export function validatePrompt(raw: string): { checks: PromptCheck[]; charCount:
           id: "duration",
           label: "Duration specified",
           status: "warn",
-          message: "No explicit duration (e.g. \u201c5-second\u201d) found.",
+          message: "Add a clip length right after the format, e.g. \u201c5-second seamless loop.\u201d",
         }
   );
 
   checks.push(
     MOTION_WORDS.test(text)
-      ? { id: "motion", label: "Describes real motion", status: "pass", message: "The prompt describes an actual animated effect, not a static shot." }
+      ? { id: "motion", label: "Describes real motion", status: "pass", message: "Describes an actual animated effect, not a static shot." }
       : {
           id: "motion",
           label: "Describes real motion",
           status: "fail",
-          message: "No motion/effect words found (steam, drip, pour, orbit...). This may generate a static image instead of a video.",
+          message: "Describe what actually moves \u2014 steam rising, sauce dripping, camera slowly orbiting \u2014 or this may render as a still image.",
         }
   );
 
@@ -68,7 +68,7 @@ export function validatePrompt(raw: string): { checks: PromptCheck[]; charCount:
           id: "light",
           label: "Lighting or background set",
           status: "warn",
-          message: "No lighting/backdrop mentioned — the model will pick one for you, which can be inconsistent.",
+          message: "Add a short phrase like \u201cdark moody kitchen background\u201d or \u201cwarm side lighting\u201d \u2014 otherwise the model picks one for you.",
         }
   );
 
@@ -78,13 +78,13 @@ export function validatePrompt(raw: string): { checks: PromptCheck[]; charCount:
           id: "lock",
           label: "Locks the dish to the reference photo",
           status: "pass",
-          message: "The prompt tells the model not to alter the uploaded dish.",
+          message: "Tells the model not to alter the uploaded dish.",
         }
       : {
           id: "lock",
           label: "Locks the dish to the reference photo",
           status: "fail",
-          message: "Missing the reference-photo lock. Without it, the model is more likely to redesign the plate.",
+          message: "Add a line telling the model to keep the dish exactly as in the uploaded photo, with no restyling \u2014 otherwise it's more likely to redesign the plate.",
         }
   );
 
@@ -95,30 +95,30 @@ export function validatePrompt(raw: string): { checks: PromptCheck[]; charCount:
           id: "quality",
           label: "Quality/style descriptor",
           status: "warn",
-          message: "No quality keyword (8k, cinematic, photorealistic...) found.",
+          message: "Add a quality keyword near the end, e.g. \u201c8k\u201d or \u201cphotorealistic,\u201d for a more consistent result.",
         }
   );
 
-  if (wordCount > 0 && wordCount < MIN_WORDS) {
+  if (charCount > 0 && charCount < TARGET_MIN_CHARS) {
     checks.push({
       id: "length-short",
       label: "Length",
       status: "warn",
-      message: `Only ${wordCount} words \u2014 likely too vague. Aim for ${MIN_WORDS}\u2013${MAX_WORDS}.`,
+      message: `${charCount} characters \u2014 likely too vague. Add a bit more scene detail to reach ${TARGET_MIN_CHARS}\u2013${TARGET_MAX_CHARS}.`,
     });
-  } else if (wordCount > MAX_WORDS) {
+  } else if (charCount > TARGET_MAX_CHARS) {
     checks.push({
       id: "length-long",
       label: "Length",
       status: "warn",
-      message: `${wordCount} words \u2014 longer than needed, costs more tokens without adding fidelity. Consider shortening.`,
+      message: `${charCount} characters \u2014 longer than needed, costs more tokens without adding fidelity. Use \u201cShorten to fit\u201d below.`,
     });
-  } else if (wordCount > 0) {
+  } else if (charCount > 0) {
     checks.push({
       id: "length-ok",
       label: "Length",
       status: "pass",
-      message: `${wordCount} words \u2014 in the efficient range.`,
+      message: `${charCount} characters \u2014 in the efficient range.`,
     });
   }
 
@@ -127,7 +127,7 @@ export function validatePrompt(raw: string): { checks: PromptCheck[]; charCount:
       id: "specificity",
       label: "Dish specificity",
       status: "warn",
-      message: "Found a generic word (\u201cfood\u201d, \u201cdish\u201d, \u201cplate\u201d) without a specific dish name nearby \u2014 name the actual dish.",
+      message: "Replace the generic word (\u201cfood\u201d, \u201cdish\u201d, \u201cplate\u201d) with the actual dish name \u2014 it noticeably improves the result.",
     });
   }
 

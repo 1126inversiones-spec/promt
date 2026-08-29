@@ -16,6 +16,7 @@ import {
 import { validatePrompt, trimToLimit, LENGTH_TARGET, type CheckStatus } from "@/lib/validate-prompt";
 import { GROUPS, type GroupId } from "@/lib/categories";
 import { cn } from "@/lib/utils";
+import { NeuralBackground } from "@/components/neural-bg";
 import type { User } from "firebase/auth";
 
 const EASE: [number, number, number, number] = [0.21, 0.47, 0.32, 0.98];
@@ -75,8 +76,9 @@ export function PromptIntake({
   const scoreColor = totalCount === 0 ? "text-smoke" : hasFail ? "text-red-400" : passCount === totalCount ? "text-emerald-400" : "text-amber-400";
 
   return (
-    <div className="depth-card relative rounded-2xl p-5">
+    <div className="depth-card relative overflow-hidden rounded-2xl p-5">
       <div className="depth-sheen" aria-hidden="true" />
+      <NeuralBackground />
       <div className="relative z-10">
         <div className="mb-1 flex items-center justify-between">
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-smoke">

@@ -70,7 +70,7 @@ export function CategoryCard({
       transition={{ duration: 0.25, ease: EASE }}
       className={cn(
         "depth-card group relative flex flex-col gap-3 overflow-hidden rounded-2xl p-4 text-left transition-colors",
-        active ? "border-ember-500/60 shadow-glow" : "hover:border-white/15"
+        active ? "depth-card-active" : "hover:border-white/15"
       )}
     >
       <div className="depth-sheen" aria-hidden="true" />

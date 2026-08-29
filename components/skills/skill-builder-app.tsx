@@ -19,6 +19,7 @@ export function SkillBuilderApp() {
   const [user, setUser] = useState<User | null>(null);
   const [mySkills, setMySkills] = useState<SavedSkill[]>([]);
   const [mySkillsLoading, setMySkillsLoading] = useState(true);
+  const [templateToLoad, setTemplateToLoad] = useState<SkillDraft | null>(null);
 
   useEffect(() => {
     const unsubscribe = subscribeToAuth(setUser);
@@ -42,6 +43,13 @@ export function SkillBuilderApp() {
   function handleSaveToLibrary(draft: SkillDraft) {
     if (!user?.email) return Promise.reject(new Error("Not signed in"));
     return saveSkill(user.email, draft);
+  }
+
+  function handleUseTemplate(draft: SkillDraft) {
+    setTemplateToLoad(draft);
+    setTimeout(() => {
+      document.getElementById("skill-wizard")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
   }
 
   return (
@@ -91,8 +99,13 @@ export function SkillBuilderApp() {
       </section>
 
       <section className="mx-auto flex max-w-4xl flex-col gap-8 px-6 pb-24">
-        <SkillTemplatesSection />
-        <SkillWizard user={user} onSaveToLibrary={handleSaveToLibrary} />
+        <SkillTemplatesSection onUseTemplate={handleUseTemplate} />
+        <SkillWizard
+          user={user}
+          onSaveToLibrary={handleSaveToLibrary}
+          loadTemplate={templateToLoad}
+          onTemplateConsumed={() => setTemplateToLoad(null)}
+        />
         <MySkillsSection user={user} skills={mySkills} loading={mySkillsLoading} onSignIn={signInWithGoogle} />
       </section>
 

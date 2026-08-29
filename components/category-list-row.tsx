@@ -29,7 +29,7 @@ export function CategoryListRow({
       onClick={onSelect}
       className={cn(
         "depth-card group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors",
-        active ? "border-ember-500/60 shadow-glow" : "hover:border-white/15"
+        active ? "depth-card-active" : "hover:border-white/15"
       )}
     >
       <div

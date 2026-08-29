@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ClipboardList,
@@ -52,9 +52,13 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
 export function SkillWizard({
   user,
   onSaveToLibrary,
+  loadTemplate,
+  onTemplateConsumed,
 }: {
   user: User | null;
   onSaveToLibrary: (draft: SkillDraft) => Promise<void>;
+  loadTemplate?: SkillDraft | null;
+  onTemplateConsumed?: () => void;
 }) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [draft, setDraft] = useState<SkillDraft>(emptySkillDraft());
@@ -62,6 +66,17 @@ export function SkillWizard({
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (loadTemplate) {
+      setDraft(loadTemplate);
+      setStep(1);
+      setSaved(false);
+      setSaveError(null);
+      onTemplateConsumed?.();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadTemplate]);
 
   const typeConfig = TASK_TYPES.find((t) => t.id === draft.taskType) ?? TASK_TYPES[0];
   const markdown = useMemo(() => buildSkillMarkdown(draft), [draft]);
@@ -117,7 +132,7 @@ export function SkillWizard({
   const canGoToStep2 = draft.name.trim().length > 0 && draft.trigger.trim().length > 0;
 
   return (
-    <div className="glass rounded-2xl p-6 md:p-8">
+    <div id="skill-wizard" className="glass rounded-2xl p-6 md:p-8">
       <div className="mb-6 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-smoke">
         <span className="flex h-5 w-5 items-center justify-center rounded-full border border-ember-700 text-ember-400">
           <ClipboardList size={12} />
@@ -159,11 +174,14 @@ export function SkillWizard({
                     key={t.id}
                     onClick={() => update({ taskType: t.id })}
                     className={cn(
-                      "depth-card rounded-xl p-3 text-left transition-colors",
-                      draft.taskType === t.id ? "border-ember-500/60 shadow-glow" : "hover:border-white/15"
+                      "depth-card relative rounded-xl p-3 text-left transition-colors",
+                      draft.taskType === t.id ? "depth-card-active" : "hover:border-white/15"
                     )}
                   >
-                    <div className="font-display text-[13px] font-semibold text-cream">{t.label}</div>
+                    {draft.taskType === t.id && (
+                      <CheckCircle2 size={14} className="absolute right-2.5 top-2.5 text-ember-400" />
+                    )}
+                    <div className="pr-4 font-display text-[13px] font-semibold text-cream">{t.label}</div>
                     <div className="mt-0.5 text-[11px] leading-relaxed text-smoke">{t.desc}</div>
                   </button>
                 ))}

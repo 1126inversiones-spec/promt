@@ -1,11 +1,11 @@
-import type { SkillTaskType } from "./skills";
+import type { SkillDraft, SkillTaskType } from "./skills";
 
 export interface SkillTemplate {
   id: string;
   title: string;
   taskType: SkillTaskType;
   summary: string;
-  markdown: string;
+  draft: SkillDraft;
 }
 
 export const SKILL_TEMPLATES: SkillTemplate[] = [
@@ -14,215 +14,195 @@ export const SKILL_TEMPLATES: SkillTemplate[] = [
     title: "Weekly content KPI report",
     taskType: "report",
     summary: "Summarize Prompt Studio activity by category and designer for the week.",
-    markdown: `---
-name: weekly-content-kpi-report
-description: Use this skill when asked to put together the weekly (or monthly) content production report for eMenu International \u2014 summarizing how many dish/drink prompts were generated and approved in Prompt Studio, broken down by category and by designer. Trigger on requests like "weekly content report", "how did we do this week", "content KPIs", or "summarize Prompt Studio activity".
----
-
-# Weekly Content KPI Report
-
-## When to use this
-Use this whenever someone asks for a status update on content production \u2014 a
-weekly recap, a monthly rollup, or a client-specific content summary. This is
-an internal reporting task, not a client-facing document unless explicitly
-asked to make it client-safe (see "Client-safe mode" below).
-
-## Information to ask for if not provided
-- **Date range** the report should cover (default: the last 7 days if not specified).
-- **Scope**: all clients, or one specific client/restaurant.
-- **Source of the data**: the Prompt Studio "My prompt list" export (.txt),
-  a screenshot of the Firestore custom-effects library, or numbers the person
-  gives you directly. If none of these are available, ask for them before
-  proceeding \u2014 do not estimate or fabricate figures.
-
-## Procedure
-1. Parse the provided data to count, for the date range:
-   - Total prompts generated, broken down by menu category (Rice & Pasta,
-     Meat & Seafood, Drinks, Desserts).
-   - How many were marked approved vs. still pending vs. rejected, if that
-     status is available in the data.
-   - Which designer/team member submitted each one, if attributed.
-2. Identify the **weakest category** \u2014 the one with the fewest prompts or
-   lowest approval rate \u2014 and call it out explicitly. This is the most useful
-   part of the report; don't bury it.
-3. Identify any **custom (designer-submitted) prompts** added to the shared
-   library that week, and who added them.
-4. Compare against the previous period if that data is available, and note
-   whether output is trending up or down.
-5. Write the report in this structure:
-   - **Headline**: one sentence, the single most important takeaway.
-   - **By the numbers**: a short table \u2014 category, prompts generated, approved.
-   - **What needs attention**: the weak spot(s) found in step 2.
-   - **Library growth**: new custom prompts added, by whom.
-6. Keep the whole report under 300 words unless asked for a detailed version.
-
-## Output format
-A short markdown report with the four sections above. Use a table for "By
-the numbers" \u2014 do not use a chart unless explicitly asked, since this is
-meant to be read quickly, not presented.
-
-## Client-safe mode
-If asked to prepare a version to share with a restaurant client (not
-internal), remove any mention of internal designer names, rejection rates,
-or backlog \u2014 clients should only see what was delivered and what's covered
-on their menu, framed positively.
-
-## Common mistakes to avoid
-- Don't invent numbers if the data wasn't provided \u2014 ask instead.
-- Don't list every single prompt individually; this is a summary, not a log.
-- Don't editorialize about individual designers' performance unless the
-  report is explicitly for a one-on-one review, not a team update.
-`,
+    draft: {
+      name: "Weekly content KPI report",
+      trigger:
+        "Use this when asked to put together the weekly (or monthly) content production report for eMenu International \u2014 summarizing how many dish/drink prompts were generated and approved in Prompt Studio, broken down by category and by designer.",
+      taskType: "report",
+      typeSpecific: {
+        dataSource: "Prompt Studio's \"My prompt list\" export (.txt), a screenshot of the Firestore library, or numbers given directly \u2014 ask if none are available, never estimate.",
+        period: "Weekly by default; monthly or client-specific on request.",
+        metrics: "Prompts generated and approved per category (Rice & Pasta, Meat & Seafood, Drinks, Desserts), attributed by designer.",
+        audience: "Internal team and leadership. Strip designer names and rejection rates for a client-safe version.",
+      },
+      steps: [
+        "Count prompts generated and approved per category and per designer for the date range.",
+        "Identify the weakest category \u2014 fewest prompts or lowest approval rate \u2014 and call it out explicitly.",
+        "Note any new custom prompts added to the shared library that week, and who added them.",
+        "Compare against the previous period if that data is available, and note the trend.",
+        "Write the report as: Headline, By the numbers (table), What needs attention, Library growth.",
+      ],
+      requiredInputs: [
+        "Date range to cover (default: the last 7 days)",
+        "Scope: all clients, or one specific client",
+        "The data source for the numbers",
+      ],
+      outputFormat: "A short markdown report, under 300 words, with a table for \u201cBy the numbers.\u201d No charts unless asked.",
+      goodExample:
+        "Headline: Drinks coverage is lagging \u2014 only 2 of 9 possible effects used this week, while Desserts hit 100% approval.\n\n| Category | Generated | Approved |\n|---|---|---|\n| Rice & Pasta | 5 | 5 |\n| Meat & Seafood | 7 | 6 |\n| Drinks | 2 | 2 |\n| Desserts | 4 | 4 |\n\nWhat needs attention: Drinks only used 2 of 9 available effects. Consider prompting the team to cover Cocktails and Blend swirl next week.\n\nLibrary growth: 1 new custom prompt added \u2014 \u201cBBQ Smoke Slow Pan\u201d by lina@emenu-international.com, filed under Meat & Seafood.",
+      badExample: "",
+      commonMistakes: [
+        "Don't invent numbers if the data wasn't provided \u2014 ask instead.",
+        "Don't list every single prompt individually; this is a summary, not a log.",
+        "Don't editorialize about individual designers unless it's explicitly a one-on-one review.",
+      ],
+    },
   },
   {
     id: "client-photo-followup",
     title: "Client photo follow-up",
     taskType: "communication",
     summary: "Draft a warm but clear message chasing missing dish/drink photos.",
-    markdown: `---
-name: client-photo-followup
-description: Use this skill when asked to draft a follow-up message to a restaurant client who hasn't yet sent the dish or drink photos needed to produce their menu videos. Trigger on requests like "follow up with [client] about photos", "chase down missing photos", "remind the client we're waiting on images", or similar.
----
-
-# Client Photo Follow-Up
-
-## When to use this
-Use this whenever someone needs to nudge a restaurant client (or a specific
-contact at that restaurant) to send the photos required to keep their
-content pipeline moving. This is a client-facing message \u2014 tone matters more
-here than in internal reports.
-
-## Information to ask for if not provided
-- **Client / restaurant name**
-- **Contact name**, if known (use it \u2014 avoids a generic "Dear Sir/Madam" feel)
-- **What's specifically missing** \u2014 which dishes, which categories, or "the
-  full batch" if nothing has arrived yet
-- **How long it's been waiting** (helps calibrate urgency)
-- **Channel**: email, WhatsApp, or a Slack/internal note to relay to the client
-- **Urgency level**: gentle reminder vs. this is blocking a deadline
-
-## Procedure
-1. Open warmly, referencing the actual project/menu by name \u2014 never a
-   generic "Hi there."
-2. State clearly and specifically what's needed (exact dishes or categories,
-   not "some photos").
-3. Give one concrete, low-friction reason it matters to *them* \u2014 framed
-   around their own upsell goals, not just "we need it to do our job."
-4. Make it effortless to respond: suggest a specific next step (a shared
-   folder link, a reply with attachments, a quick call).
-5. Match the urgency to what was provided.
-6. Sign off with a real name and role if provided.
-
-## Output format
-A ready-to-send message in the requested channel's natural format \u2014 email
-(subject + short body) or a shorter, conversational WhatsApp message.
-
-## Common mistakes to avoid
-- Don't guess which photos are missing if it wasn't specified \u2014 ask.
-- Don't pile on multiple asks in one message if only one thing is needed.
-- Don't use urgent language ("ASAP") unless explicitly time-sensitive.
-`,
+    draft: {
+      name: "Client photo follow-up",
+      trigger:
+        "Use this when asked to draft a follow-up message to a restaurant client who hasn't yet sent the dish or drink photos needed to produce their menu videos.",
+      taskType: "communication",
+      typeSpecific: {
+        situation: "A restaurant client hasn't sent required dish/drink photos yet \u2014 could be a first gentle nudge or something blocking a deadline.",
+        tone: "Warm and low-pressure for a first reminder; clear about the date, without sounding threatening, if it's time-sensitive.",
+        variables: "Client/restaurant name, contact name, exactly what's missing, how long it's been waiting.",
+        channel: "Email or WhatsApp \u2014 match the format to whichever is requested.",
+      },
+      steps: [
+        "Open warmly, referencing the actual project/menu by name \u2014 never a generic greeting.",
+        "State clearly and specifically what's needed \u2014 exact dishes or categories, not \u201csome photos.\u201d",
+        "Give one concrete reason it matters to them \u2014 framed around their own upsell goals, not just our workflow.",
+        "Make it effortless to respond: a shared folder link, a reply with attachments, or a quick call.",
+        "Match the urgency to what was described, and sign off with a real name if provided.",
+      ],
+      requiredInputs: [
+        "Client / restaurant name and contact name",
+        "What's specifically missing",
+        "How long it's been waiting, and the urgency level",
+        "Channel: email or WhatsApp",
+      ],
+      outputFormat: "A ready-to-send message: email (subject + short body) or a shorter WhatsApp-style message.",
+      goodExample:
+        "Subject: Quick check-in on your dessert photos \ud83c\udf70\n\nHi Marco,\n\nHope things have been busy (in a good way!) at Trattoria Bella. We're ready to start building out the video content for your dessert menu, but we're still missing photos for the Tiramisu and the Panna Cotta.\n\nSince your entrees have already seen a nice lift since the new videos went live, we'd love to get desserts moving the same way \u2014 but we do need those two photos to get started.\n\nWhenever you get a chance, just reply to this email with the photos attached, or drop them in the shared folder here: [link].\n\nThanks so much,\nLina",
+      badExample: "",
+      commonMistakes: [
+        "Don't guess which photos are missing if it wasn't specified \u2014 ask.",
+        "Don't pile on multiple asks in one message if only one thing is needed.",
+        "Don't use urgent language (\u201cASAP\u201d) unless explicitly time-sensitive.",
+      ],
+    },
   },
   {
     id: "new-client-onboarding-checklist",
     title: "New client onboarding checklist",
     taskType: "document",
     summary: "Standard checklist for bringing a new restaurant into the content pipeline.",
-    markdown: `---
-name: new-client-onboarding-checklist
-description: Use this skill when asked to prepare the onboarding checklist for a new restaurant client starting with eMenu International \u2014 what photos/videos are needed, what menu categories to cover, and what information to collect before content production can start. Trigger on "new client onboarding", "onboard [restaurant]", or "what do we need from a new client".
----
-
-# New Client Onboarding Checklist
-
-## When to use this
-Use this when a new restaurant, cafe, or bar is signing on and someone needs
-a clear checklist of what to collect and confirm before content production
-(prompts, videos) can begin.
-
-## Information to ask for if not provided
-- **Restaurant name and country** (menu conventions and dish naming vary by
-  market \u2014 this matters for translation/localization later).
-- **Menu categories they offer**: which of Rice & Pasta, Meat & Seafood,
-  Drinks, Desserts apply, and any category outside those four.
-- **Point of contact** for photo delivery and approvals.
-- **Existing photo/video assets**, if any, vs. starting from zero.
-- **Target launch date** for the digital menu going live.
-
-## Procedure
-1. Confirm which menu categories apply and roughly how many dishes/drinks
-   per category need content.
-2. List out the specific photo requirements per dish (well-lit, on-brand
-   plating, no other hands/utensils in frame unless intentional) \u2014 point to
-   the existing "Digital Menu Photography Guidelines" standard.
-3. Set expectations on turnaround: photos in \u2192 prompt generated \u2192 video
-   approved \u2192 live on the client's menu.
-4. Identify who on the internal team owns this client (designer assigned).
-5. Set a follow-up date to check on missing photos if the client hasn't
-   delivered everything up front.
-
-## Output format
-A checklist (markdown checkboxes), grouped into: **Client info**, **Content
-needed by category**, **Team ownership**, **Timeline**. Keep it scannable \u2014
-this is meant to be worked through, not read end to end.
-
-## Common mistakes to avoid
-- Don't assume all four menu categories apply \u2014 confirm with the client.
-- Don't skip setting an internal owner \u2014 unowned onboarding stalls.
-`,
+    draft: {
+      name: "New client onboarding checklist",
+      trigger:
+        "Use this when a new restaurant, cafe, or bar is signing on and someone needs a clear checklist of what to collect and confirm before content production can begin.",
+      taskType: "document",
+      typeSpecific: {
+        docType: "New client onboarding checklist",
+        sections: "Client info, Content needed by category, Team ownership, Timeline",
+        formatting: "Markdown checkboxes, grouped by section \u2014 scannable, meant to be worked through, not read end to end.",
+      },
+      steps: [
+        "Confirm which menu categories apply and roughly how many dishes/drinks per category need content.",
+        "List the specific photo requirements per dish, pointing to the Digital Menu Photography Guidelines standard.",
+        "Set expectations on turnaround: photos in \u2192 prompt generated \u2192 video approved \u2192 live on the menu.",
+        "Identify who on the internal team owns this client.",
+        "Set a follow-up date to check on missing photos if not everything was delivered up front.",
+      ],
+      requiredInputs: [
+        "Restaurant name and country",
+        "Menu categories offered",
+        "Point of contact for photo delivery and approvals",
+        "Target launch date",
+      ],
+      outputFormat: "A checklist (markdown checkboxes) grouped into: Client info, Content needed by category, Team ownership, Timeline.",
+      goodExample:
+        "## Client info\n- [ ] Restaurant name: Trattoria Bella\n- [ ] Country: Italy\n- [ ] Contact: Marco Rossi (marco@trattoriabella.it)\n\n## Content needed by category\n- [ ] Rice & Pasta \u2014 4 dishes\n- [ ] Meat & Seafood \u2014 6 dishes\n- [ ] Desserts \u2014 3 dishes\n\n## Team ownership\n- [ ] Assigned designer: Lina\n\n## Timeline\n- [ ] Target launch: Oct 15\n- [ ] Follow-up check: Sept 30 if photos haven't arrived",
+      badExample: "",
+      commonMistakes: [
+        "Don't assume all four menu categories apply \u2014 confirm with the client.",
+        "Don't skip setting an internal owner \u2014 unowned onboarding stalls.",
+      ],
+    },
   },
   {
     id: "prompt-audit-checklist",
     title: "Prompt audit checklist",
     taskType: "audit",
     summary: "Review a submitted video prompt against the brand's quality standard.",
-    markdown: `---
-name: prompt-audit-checklist
-description: Use this skill when asked to review or audit a video generation prompt before it's used in Google Flow \u2014 checking it against eMenu's quality standard (format, real motion, reference-photo lock, specificity). Trigger on "audit this prompt", "check this prompt before I use it", or "does this prompt meet our standard".
----
-
-# Prompt Audit Checklist
-
-## When to use this
-Use this whenever a designer or team member wants a prompt reviewed before
-sending it to Google Flow \u2014 whether it came from Prompt Studio, was
-hand-written, or was submitted by someone else for approval.
-
-**This applies only to Flow video-generation prompts \u2014 not to Claude Skill
-files.** Skills follow a completely different standard and have no length
-ceiling; they should be as long and detailed as the task requires. Do not
-apply the length or character-count guidance below to anything other than a
-Flow prompt.
-
-## Information to ask for if not provided
-- The full prompt text.
-- Which menu category / dish it's for, if not obvious from the prompt.
-
-## Procedure
-Check the prompt against each of these, and report pass/fail with a specific
-fix for anything that fails \u2014 don't just say "improve this":
-1. **Format specified** \u2014 aspect ratio and orientation stated (9:16, 1:1, 16:9).
-2. **Duration specified** \u2014 an explicit clip length (e.g. "5-second").
-3. **Describes real motion** \u2014 an actual animated effect (steam, drip, pour,
-   orbit...), not just a static description.
-4. **Lighting or background set** \u2014 otherwise the model picks one inconsistently.
-5. **Locks the dish to the reference photo** \u2014 explicitly tells the model not
-   to restyle, replace, or regenerate the dish itself.
-6. **Names the specific dish** \u2014 not a generic "the food" or "the dish"
-   standing in for a real name.
-7. **Length is efficient** \u2014 roughly 350\u2013750 characters; much longer wastes
-   tokens without adding fidelity.
-
-## Output format
-A short checklist \u2014 one line per criterion with a \u2713 or \u2717 and, for any
-\u2717, one sentence on exactly how to fix it. End with an overall verdict: ready
-to use, or needs revision first.
-
-## Common mistakes to avoid
-- Don't approve a prompt with a vague dish reference just because everything
-  else passes \u2014 specificity has an outsized effect on result quality.
-- Don't rewrite the whole prompt unless asked \u2014 point out what to fix and
-  let the person revise it themselves, unless they explicitly want a rewrite.
-`,
+    draft: {
+      name: "Prompt audit checklist",
+      trigger:
+        "Use this when asked to review or audit a video generation prompt before it's used in Google Flow \u2014 checking it against eMenu's quality standard.",
+      taskType: "audit",
+      typeSpecific: {
+        criteria:
+          "Format specified, duration specified, real motion described, lighting/background set, reference-photo lock present, dish named specifically (not \u201cthe dish\u201d), length roughly 350\u2013750 characters. This applies only to Flow video-generation prompts \u2014 not to Claude Skill files, which have no length ceiling.",
+        scoring: "All criteria should pass; any failure needs one specific, actionable fix before approval.",
+        feedbackStyle: "A checklist, one line per criterion with a \u2713 or \u2717 and a one-sentence fix for any \u2717, ending with an overall verdict.",
+      },
+      steps: [
+        "Check the prompt has an aspect ratio and orientation stated.",
+        "Check it has an explicit clip duration.",
+        "Check it describes real motion (steam, drip, pour, orbit\u2026), not just a static description.",
+        "Check lighting or background is set.",
+        "Check it explicitly locks the dish to the reference photo (no restyling/regenerating).",
+        "Check the dish is named specifically, not left as a generic \u201cthe dish\u201d or \u201cthe food.\u201d",
+        "Check the length is efficient (roughly 350\u2013750 characters) \u2014 flag if much longer.",
+        "Give an overall verdict: ready to use, or needs revision first.",
+      ],
+      requiredInputs: ["The full prompt text", "Which menu category / dish it's for, if not obvious"],
+      outputFormat: "A short checklist \u2014 one line per criterion with \u2713/\u2717, a fix for any \u2717, and an overall verdict.",
+      goodExample:
+        "\u2713 Format specified (9:16 vertical)\n\u2713 Duration specified (5-second)\n\u2713 Describes real motion (steam rising)\n\u2717 Dish named specifically \u2014 says \u201cthe dish,\u201d change to \u201cthe grilled ribeye with chimichurri\u201d\n\u2713 Reference-photo lock present\n\u2713 Length efficient (612 characters)\n\nVerdict: needs one small revision (name the dish) before use.",
+      badExample: "",
+      commonMistakes: [
+        "Don't approve a prompt with a vague dish reference just because everything else passes.",
+        "Don't rewrite the whole prompt unless asked \u2014 point out the fix and let the person revise it.",
+      ],
+    },
+  },
+  {
+    id: "hourly-billing-invoice",
+    title: "Cuenta de cobro por horas",
+    taskType: "document",
+    summary: "Genera la cuenta de cobro mensual con el formato estándar de la empresa.",
+    draft: {
+      name: "Cuenta de cobro por horas",
+      trigger:
+        "\u00dasese cuando se pida generar la cuenta de cobro / factura de horas trabajadas del mes, a partir de las horas por proyecto y la tarifa vigente.",
+      taskType: "document",
+      typeSpecific: {
+        docType: "Cuenta de cobro / factura de horas trabajadas",
+        sections:
+          "Datos del prestador, período facturado, detalle de horas por proyecto, tarifa y subtotal, total a pagar, datos bancarios",
+        formatting:
+          "Seguir exactamente el formato del ejemplo de abajo \u2014 mismo orden de secciones y misma tabla para el detalle de horas. Personaliza nombre, tarifa y cuenta bancaria a cada persona.",
+      },
+      steps: [
+        "Si falta el período, las horas trabajadas o la tarifa, pedirlos antes de continuar \u2014 nunca inventar cifras.",
+        "Calcular el subtotal por proyecto (horas \u00d7 tarifa) y el total general.",
+        "Armar el documento siguiendo exactamente la estructura del ejemplo, cambiando solo los datos variables.",
+        "Verificar que el total coincida con la suma del detalle antes de entregar.",
+      ],
+      requiredInputs: [
+        "Nombre completo y documento del prestador de servicios",
+        "Período a facturar",
+        "Horas trabajadas por proyecto o cliente",
+        "Tarifa por hora vigente",
+        "Datos bancarios para el pago",
+      ],
+      outputFormat: "Un documento con el mismo formato exacto que el ejemplo de buen resultado de abajo.",
+      goodExample:
+        "CUENTA DE COBRO\nPrestador: [Nombre completo]\nDocumento de identidad: [N\u00famero]\nPer\u00edodo: [Ej. 1 al 31 de agosto de 2026]\n\nCliente: eMenu International\nConcepto: Servicios de dise\u00f1o / gesti\u00f3n de contenido\n\nDetalle de horas\n| Proyecto | Horas | Tarifa/hora | Subtotal |\n|---|---|---|---|\n| [Proyecto A] | [XX] | $[XX] | $[XXX] |\n| [Proyecto B] | [XX] | $[XX] | $[XXX] |\n\nTOTAL A PAGAR: $[XXX]\n\nDatos bancarios:\nBanco: [Nombre del banco]\nCuenta: [Tipo y n\u00famero de cuenta]\nTitular: [Nombre del titular]",
+      badExample:
+        "No des solo un total sin la tabla de detalle por proyecto, aunque solo haya un proyecto \u2014 el cliente necesita ver el desglose.",
+      commonMistakes: [
+        "No inventar horas o tarifas si no se proporcionan \u2014 siempre preguntar primero.",
+        "No omitir la tabla de detalle por proyecto.",
+        "Verificar que el total sume correctamente antes de entregar.",
+      ],
+    },
   },
 ];
